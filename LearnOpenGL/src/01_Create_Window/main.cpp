@@ -10,13 +10,13 @@ void frameBufferSizeChanged(GLFWwindow* window,int width,int height)
 }
 
 //捕获按键事件
-    void pressKey(GLFWwindow* window)
+void pressKey(GLFWwindow* window)
+{
+    if(glfwGetKey(window,GLFW_KEY_ESCAPE)==GLFW_PRESS)
     {
-        if(glfwGetKey(window,GLFW_KEY_ESCAPE)==GLFW_PRESS)
-        {
-            glfwSetWindowShouldClose(window,true);
-        }
+        glfwSetWindowShouldClose(window,true);
     }
+}
 
 int main()
 {
@@ -59,7 +59,14 @@ int main()
     //进行窗口渲染循环，以保持窗口显示,glfwWindowShouldClose表示窗口是否应该关闭，glfwSwapBuffers双缓冲区交换，glfwPollEvents窗口事件监视
     while(!glfwWindowShouldClose(window))
     {
+        //按键指令
         pressKey(window);
+
+        //渲染指令
+        glClearColor(0.2,0.3,0.3,1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        //窗口交换
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

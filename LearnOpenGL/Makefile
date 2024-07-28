@@ -18,7 +18,7 @@ LFLAGS =
 OUTPUT	:= output
 
 # define source directory
-SRC		:= src/01_Create_Window
+SRC		:= src/02_hello_triangle
 
 # define include directory
 INCLUDE	:= include
