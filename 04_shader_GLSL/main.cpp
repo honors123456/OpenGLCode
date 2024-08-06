@@ -99,7 +99,9 @@ int main(int argc,char** argv)
         //通过uniform来设置输出图案颜色
         double timeValue = glfwGetTime();
         float greenValue = static_cast<float>(sin(timeValue) / 2.0f + 0.5f);
+        //获取cusColor的位置
         int vertexColorLocation = glGetUniformLocation(shaderProgram, "cusColor");
+        //通过位置来设置uniform的值
         glUniform4f(vertexColorLocation, greenValue, greenValue, greenValue, 1.0f);
 
         glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,0);
