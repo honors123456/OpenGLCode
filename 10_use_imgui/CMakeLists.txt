@@ -1,0 +1,46 @@
+cmake_minimum_required(VERSION 3.8)
+
+project(use_imGui)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
+
+if(MSVC)
+	add_compile_options(/Zc:__cplusplus)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /source-charset:utf-8 /execution-charset:utf-8")
+endif()
+
+set(INCLUDEPATH ${CMAKE_CURRENT_LIST_DIR}/include)
+include_directories(${INCLUDEPATH})
+set(OPENGL_LIB_DIR ${CMAKE_CURRENT_LIST_DIR}/lib)
+
+set(IMGUI_HEADERS "${INCLUDEPATH}/imGui/imconfig.h" 
+									"${INCLUDEPATH}/imGui/imgui_impl_glfw.h" 
+									"${INCLUDEPATH}/imGui/imgui_impl_opengl3.h" 
+									"${INCLUDEPATH}/imGui/imgui_internal.h"
+									"${INCLUDEPATH}/imGui/imgui.h"
+									"${INCLUDEPATH}/imGui/imstb_rectpack.h"
+									"${INCLUDEPATH}/imGui/imstb_textedit.h"
+									"${INCLUDEPATH}/imGui/imstb_truetype.h"
+									"${INCLUDEPATH}/imGui/imgui_impl_opengl3_loader.h")
+
+set(IMGUI_SOURCES "${INCLUDEPATH}/imGui/imgui_demo.cpp" 
+									"${INCLUDEPATH}/imGui/imgui_draw.cpp" 
+									"${INCLUDEPATH}/imGui/imgui_impl_glfw.cpp"
+									"${INCLUDEPATH}/imGui/imgui_impl_opengl3.cpp"
+									"${INCLUDEPATH}/imGui/imgui_tables.cpp"
+									"${INCLUDEPATH}/imGui/imgui_widgets.cpp"
+									"${INCLUDEPATH}/imGui/imgui.cpp")
+
+set(HEADERS "shader.h")
+set(SOURCES "main.cpp" "shader.cpp")
+
+aux_source_directory(./src DIR_SRCS)
+
+add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES} ${DIR_SRCS} ${IMGUI_HEADERS} ${IMGUI_SOURCES})
+
+target_link_libraries(${PROJECT_NAME}
+					${OPENGL_LIB_DIR}/glfw3.lib
+					${OPENGL_LIB_DIR}/OpenGL32.Lib)
