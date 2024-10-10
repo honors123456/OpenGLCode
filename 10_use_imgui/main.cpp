@@ -158,18 +158,22 @@ int main(int argc, char **argv)
     projection = glm::perspective(glm::radians(45.0f), (float)(640 / 480.0), 0.1f, 100.0f); // 视场角(观察的远近)，宽高比，近距离，远距离（这两个距离决定裁剪的显示区域），这几个参数默认即可
     shader.setUniform("projection", projection);
 
+    ImVec4 color = ImVec4(0.1, 0.1, 0.1, 1.0);
+    static float f = 0.0f;
     while (!glfwWindowShouldClose(window))
     {
-        // 创建ImGui窗口
+        //  创建ImGui窗口
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
         ImGui::Begin("hello world!");
         ImGui::Text("Application average %.3f ms / frame ( %.1f FPS )", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::SliderFloat("slider ", &f, 0.0f, 100.0f);
+        ImGui::ColorEdit3("Color Edit ", (float *)&color);
         ImGui::End();
 
-        glClearColor(0.2f, 0.5f, 0.5f, 1.0f);
+        glClearColor(color.x, color.y, color.z, color.w);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // 开始渲染
