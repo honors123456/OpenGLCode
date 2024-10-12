@@ -58,8 +58,6 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    glViewport(0, 0, 800, 1000);
-
     Shader shader("../../shaders/vertex.glsl", "../../shaders/fragment.glsl");
     program = shader.getProgram();
 
@@ -86,18 +84,21 @@ int main(int argc, char **argv)
     float windowAspectRatio = (float)800 / (float)1000;
     float imageAspectRatio = (float)3072 / (float)2048;
 
+
+    glViewport(0, 0, 800, 1000);
+
     unsigned int VAO;
     unsigned int VBO;
-
+    //如果窗口不是正方形，则需要对顶点数组进行调整以铺满窗口，再来对图片进行等比例缩放
     if (windowAspectRatio > imageAspectRatio) {
         // 窗口比较宽，以图片高度为基准，调整宽度
         float scale = imageAspectRatio / windowAspectRatio;
         float vertexes[] = {
             //     ---- 位置 ----         ---- 颜色 ----       - 纹理坐标 -
-            scale * 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上角
-            scale * 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下角
-            -scale * 0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下角
-            -scale * 0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上角
+            scale * 1.0f,  1.0f / windowAspectRatio, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上角
+            scale * 1.0f, -1.0f / windowAspectRatio, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下角
+            -scale * 1.0f, -1.0f / windowAspectRatio, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下角
+            -scale * 1.0f,  1.0f / windowAspectRatio, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上角
         };
 
         
@@ -113,10 +114,10 @@ int main(int argc, char **argv)
         float scale = windowAspectRatio / imageAspectRatio;
         float vertexes[] = {
             //     ---- 位置 ----         ---- 颜色 ----       - 纹理坐标 -
-            0.5f,  scale * 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上角
-            0.5f, -scale * 0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下角
-            -0.5f, -scale * 0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下角
-            -0.5f,  scale * 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上角
+            1.0f,  1.0f / windowAspectRatio * scale, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上角
+            1.0f, -1.0f / windowAspectRatio * scale, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下角
+            -1.0f, -1.0f / windowAspectRatio * scale, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下角
+            -1.0f,  1.0f / windowAspectRatio * scale, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上角
         };
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
@@ -188,7 +189,7 @@ int main(int argc, char **argv)
         lastTime = currentFrame;
 
         glClearColor(0.1f,0.1f,0.1f,1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glm::mat4 model = glm::mat4(1.0f);
         //glw库旋转用的都是弧度制，要使用glm::radians函数转换为角度制
