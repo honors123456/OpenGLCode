@@ -29,6 +29,7 @@ float pitch =  0.0f;
 float lastX =  512.0f / 2.0;
 float lastY =  512.0f / 2.0;
 float fov   =  45.0f;
+float angle = 0.0f;
 
 unsigned int program;
 
@@ -177,6 +178,7 @@ int main(int argc, char **argv)
 
     shader.setInt("ourTexture", 0);
 
+    int i=0;
     while (!glfwWindowShouldClose(window))
     {
         keyInput_callback(window);
@@ -189,7 +191,8 @@ int main(int argc, char **argv)
         glClear(GL_COLOR_BUFFER_BIT);
 
         glm::mat4 model = glm::mat4(1.0f);
-        glm::qua<float> qu = glm::qua<float>(glm::vec3(0.0f, 0.0f,glfwGetTime()));
+        //glw库旋转用的都是弧度制，要使用glm::radians函数转换为角度制
+        glm::qua<float> qu = glm::qua<float>(glm::radians(glm::vec3(0.0f, 0.0f, angle)));
         model = glm::mat4_cast(qu);
         shader.setUniform("model", model);
 
@@ -328,5 +331,10 @@ void keyInput_callback(GLFWwindow *window)
     {
         std::cout<<" press key D"<<std::endl;
         cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    }
+    if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        std::cout<<" press key SPACE"<<std::endl;
+        angle += 2.0f;
     }
 }
