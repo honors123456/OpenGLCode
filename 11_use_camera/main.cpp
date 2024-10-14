@@ -31,6 +31,9 @@ float lastY =  512.0f / 2.0;
 float fov   =  45.0f;
 float angle = 0.0f;
 
+float screenWidth  = 800.0f;
+float screenHeight = 1000.0f;
+
 unsigned int program;
 
 int main(int argc, char **argv)
@@ -41,7 +44,7 @@ int main(int argc, char **argv)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(800, 1000, "Use_Camera", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(screenWidth, screenHeight, "Use_Camera", NULL, NULL);
     if (!window)
     {
         const char *description;
@@ -81,11 +84,11 @@ int main(int argc, char **argv)
     //     -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f   // 左上
     // };
 
-    float windowAspectRatio = (float)800 / (float)1000;
+    float windowAspectRatio = screenWidth / screenHeight;
     float imageAspectRatio = (float)3072 / (float)2048;
 
 
-    glViewport(0, 0, 800, 1000);
+    glViewport(0, 0, screenWidth, screenHeight);
 
     unsigned int VAO;
     unsigned int VBO;
@@ -202,7 +205,7 @@ int main(int argc, char **argv)
         shader.setUniform("view", view);
 
         glm::mat4 projection = glm::mat4(1.0f);
-        projection = glm::perspective(glm::radians(fov), (float)800 / (float)1000, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(45.0f), screenWidth / screenHeight, 0.1f, 100.0f);
         shader.setUniform("projection", projection);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -223,15 +226,17 @@ void windowSizeChanged_callback(GLFWwindow *window, int width, int height)
     int viewportWidth, viewportHeight;
     int offsetX = 0, offsetY = 0;
 
-    float scaleX=(float)width/800.0f;
-    float scaleY=(float)height/1000.0f;
-    float scale=(scaleX>scaleY?scaleX:scaleY);
+    float scaleX=(float)width/screenWidth;
+    float scaleY=(float)height/screenHeight;
+    float scale=(scaleX<scaleY?scaleX:scaleY);
 
-    viewportWidth=800.0f*scale;
-    viewportHeight=1000.0f*scale;
+    viewportWidth=screenWidth*scale;
+    viewportHeight=screenHeight*scale;
 
     offsetX = (width - viewportWidth) / 2;
     offsetY = (height - viewportHeight) / 2;
+
+    std::cout<< "  "<<offsetX<<" "<<offsetY<<" "<<viewportWidth <<" "<<viewportHeight<<" w "<<width<<" h "<<height<<std::endl;
 
     glViewport(offsetX, offsetY, (int)viewportWidth, (int)viewportHeight);
 }
@@ -295,7 +300,8 @@ void mouseWheel_callback(GLFWwindow *window, double xoffset, double yoffset)
     // if(fov >= 45.0f)
     //     fov = 45.0f;
 
-    float cameraSpeed = 10.0f * deltaTime;
+    //float cameraSpeed = 10.0f * deltaTime;
+    float cameraSpeed = 0.15;
     if(yoffset > 0)
         cameraPos += cameraSpeed * cameraFront;
     if(yoffset < 0)
