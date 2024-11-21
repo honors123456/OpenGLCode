@@ -288,7 +288,6 @@ int main(int argc,char** argv)
     TextRenderer textRenderer(shader.programID(), 1000, 1000);
     textRenderer.init();
 
-
     // 解绑 VAO 和 VBO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
