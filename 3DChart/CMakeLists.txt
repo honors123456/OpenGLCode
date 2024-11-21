@@ -12,11 +12,15 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /source-charset:utf-8 /execution-charset:utf-8")
 endif()
 
+set(FREETYPE_DIR ${CMAKE_CURRENT_LIST_DIR}/freeType)
+
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
+include_directories(${FREETYPE_DIR}/include)
+
 set(OPENGL_LIB_DIR ${CMAKE_CURRENT_LIST_DIR}/lib)
 
-set(HEADERS "shader.h")
-set(SOURCES "main.cpp" "shader.cpp")
+set(HEADERS "shader.h" "Camera.h" "RenderText.h")
+set(SOURCES "main.cpp" "shader.cpp" "RenderText.cpp")
 
 aux_source_directory(./src DIR_SRCS)
 
@@ -24,4 +28,5 @@ add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES} ${DIR_SRCS})
 
 target_link_libraries(${PROJECT_NAME}
 					${OPENGL_LIB_DIR}/glfw3.lib
-					${OPENGL_LIB_DIR}/OpenGL32.Lib)
+					${OPENGL_LIB_DIR}/OpenGL32.Lib
+					${FREETYPE_DIR}/lib/debug/freetype.lib)
