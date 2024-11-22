@@ -1,0 +1,4 @@
+linked lib files:
+	glfw3.lib
+	OpenGL32.Lib
+	opengl32.dll
