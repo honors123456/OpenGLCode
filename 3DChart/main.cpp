@@ -285,8 +285,8 @@ int main(int argc,char** argv)
     Shader shader("../../shaders/vertexShader.glsl","../../shaders/fragmentShader.glsl");
     glEnable(GL_MULTISAMPLE);
 
-    TextRenderer textRenderer(shader.programID(), 1000, 1000);
-    textRenderer.init();
+    //TextRenderer textRenderer(shader.programID(), 1000, 1000);
+    //textRenderer.init();
 
     // 解绑 VAO 和 VBO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -312,6 +312,7 @@ int main(int argc,char** argv)
         glUniformMatrix4fv(glGetUniformLocation(shader.programID(), "view"), 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(glGetUniformLocation(shader.programID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
+        //shader.setBool("isGrid", true);
         // 绘制 XZ 平面
         glBindVertexArray(VAO_XZ);
         glDrawArrays(GL_LINES, 0, versXZ.size() / 3);
@@ -354,7 +355,8 @@ int main(int argc,char** argv)
         glDrawArrays(GL_TRIANGLE_FAN, 0, 16 + 2);
         glBindVertexArray(0);
 
-        textRenderer.renderText("OpenGL", 10, 10, 10, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        // shader.setBool("isGrid", false);
+        // textRenderer.renderText("X", 10, 10, 10, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
         glfwSwapBuffers(window);
         glfwPollEvents();
