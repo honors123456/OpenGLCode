@@ -12,27 +12,32 @@
 #include <string>
 #include <glm/glm.hpp>
 
+
+struct Character {
+    unsigned int TextureID; // ID handle of the glyph texture
+    glm::ivec2   Size;      // Size of glyph
+    glm::ivec2   Bearing;   // Offset from baseline to left/top of glyph
+    unsigned int Advance;   // Horizontal offset to advance to next glyph
+};
+class Shader;
 class TextRenderer {
 public:
     // 修改构造函数，传入外部着色器程序
-    TextRenderer(GLuint program, GLuint screenWidth, GLuint screenHeight);
+    TextRenderer();
     ~TextRenderer();
     
     // 初始化FreeType库
     void init();
     
     // 渲染文本
-    void renderText(const std::string &text, float x, float y, float z, float scale, const glm::vec3 &color);
+    void renderText(Shader &shader,const std::string &text, float x, float y, float z, float scale, const glm::vec3 &color);
 
 private:
-    GLuint program;  // 外部传入的着色器程序
     GLuint VAO, VBO; // 用于渲染的缓冲区
     FT_Library ft;  // FreeType库
     FT_Face face;   // 字体面
     
-    std::map<char, GLuint> characterTextures; // 字符纹理缓存
-
-    GLuint loadCharacterTexture(FT_Face face, char c);  // 加载单个字符的纹理
+    std::map<GLchar, Character> Characters;
 };
 
 #endif
