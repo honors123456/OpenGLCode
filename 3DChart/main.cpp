@@ -88,7 +88,7 @@ std::vector<float> createConeX(float xEnd, float radius, int segments) {
     std::vector<float> vertices;
 
     // 锥体顶点（顶点在轴的延长线上）
-    vertices.push_back(xEnd + 2.0f); // 锥体顶点的 X 坐标
+    vertices.push_back(xEnd + 4.0f); // 锥体顶点的 X 坐标
     vertices.push_back(0.0f);        // Y
     vertices.push_back(0.0f);        // Z
 
@@ -113,7 +113,7 @@ std::vector<float> createConeY(float yEnd, float radius, int segments) {
 
     // 锥体顶点（顶点在轴的延长线上）
     vertices.push_back(0.0f); // 锥体顶点的 X 坐标
-    vertices.push_back(yEnd+2.0f);        // Y
+    vertices.push_back(yEnd+4.0f);        // Y
     vertices.push_back(0.0f);        // Z
 
     // 圆形底面的顶点
@@ -138,7 +138,7 @@ std::vector<float> createConeZ(float zEnd, float radius, int segments) {
     // 锥体顶点（顶点在轴的延长线上）
     vertices.push_back(0.0f); // 锥体顶点的 X 坐标
     vertices.push_back(0.0f);        // Y
-    vertices.push_back(zEnd+2.0f);        // Z
+    vertices.push_back(zEnd+4.0f);        // Z
 
     // 圆形底面的顶点
     float angleStep = 2.0f * M_PI / segments;
@@ -188,12 +188,12 @@ int main(int argc,char** argv)
     std::vector<float> versXZ = verticesXZ(0.0f, 0.0f, 100.0f, 100.0f, 20);
     std::vector<float> versXY = verticesXY(0.0f, 0.0f, 100.0f, 100.0f, 20);
     std::vector<float> versYZ = verticesYZ(0.0f, 0.0f, 100.0f, 100.0f, 20);
-    std::vector<float> axisX = {0.0f, 0.0f, 0.0f, 105.0f, 0.0f,0.0f};
-    std::vector<float> axisY = {0.0f, 0.0f, 0.0f, 0.0f, 105.0f,0.0f};
-    std::vector<float> axisZ = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f,105.0f};
-    std::vector<float> coneX = createConeX(104.0f, 0.3f, 16);
-    std::vector<float> coneY = createConeY(104.0f, 0.3f, 16);
-    std::vector<float> coneZ = createConeZ(104.0f, 0.3f, 16);
+    std::vector<float> axisX = {0.0f, 0.0f, 0.0f, 108.0f, 0.0f,0.0f};
+    std::vector<float> axisY = {0.0f, 0.0f, 0.0f, 0.0f, 108.0f,0.0f};
+    std::vector<float> axisZ = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f,108.0f};
+    std::vector<float> coneX = createConeX(108.0f, 1.0f, 16);
+    std::vector<float> coneY = createConeY(108.0f, 1.0f, 16);
+    std::vector<float> coneZ = createConeZ(108.0f, 1.0f, 16);
 
     unsigned int VAO_XZ, VBO_XZ;
     unsigned int VAO_XY, VBO_XY;
@@ -302,13 +302,22 @@ int main(int argc,char** argv)
         glUniform3f(glGetUniformLocation(shader.programID(), "gridColor"), 1.0f, 1.0f, 1.0f); // 灰色网格
         glUniform1f(glGetUniformLocation(shader.programID(), "alpha"), 0.3f); // 设置透明度为 0.5
 
-        glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view = glm::lookAt(glm::vec3(200.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 1000.0f);
+        // glm::mat4 model = glm::mat4(1.0f);
+        // glm::mat4 view = glm::lookAt(glm::vec3(200.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        // glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 1000.0f);
 
-        glUniformMatrix4fv(glGetUniformLocation(shader.programID(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(glGetUniformLocation(shader.programID(), "view"), 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(glGetUniformLocation(shader.programID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        // create transformations
+        glm::mat4 model         = glm::mat4(1.0f);
+        glm::mat4 view          = glm::mat4(1.0f);
+        glm::mat4 projection    = glm::mat4(1.0f);
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+        view  = glm::lookAt(glm::vec3(200.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        projection = glm::perspective(glm::radians(45.0f), (float)1000 / (float)1000, 0.1f, 1000.0f);
+        unsigned int modelLoc = glGetUniformLocation(shader.programID(), "model");
+        unsigned int viewLoc  = glGetUniformLocation(shader.programID(), "view");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+        shader.setMat4("projection", projection);
 
         shader.setBool("useTexture", false);
         // 绘制 XZ 平面
@@ -355,9 +364,9 @@ int main(int argc,char** argv)
 
         shader.setBool("useTexture", true);
         shader.setInt("ourTexture", 0);
-        textRenderer.renderText(shader,"X", 107, 0, 0, 0.1f, glm::vec3(0.5, 0.8f, 0.2f));
-        textRenderer.renderText(shader,"Y", 0, 107, 0, 0.1f, glm::vec3(0.5, 0.8f, 0.2f));
-        textRenderer.renderText(shader,"Z", 0, 0, 107, 0.1f, glm::vec3(0.5, 0.8f, 0.2f));
+        textRenderer.renderText(shader,"X", 115, -2.5, 0, 0.1f, glm::vec3(1.0f, 1.0f, 1.0f));
+        textRenderer.renderText(shader,"Y", -2.5, 115, 0, 0.1f, glm::vec3(1.0f, 1.0f, 1.0f));
+        textRenderer.renderText(shader,"Z", 0, 0, 115, 0.1f, glm::vec3(1.0f, 1.0f, 1.0f));
 
         glfwSwapBuffers(window);
         glfwPollEvents();

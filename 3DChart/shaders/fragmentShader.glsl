@@ -14,7 +14,7 @@ void main()
     if(useTexture)
     {
         vec4 sampled = vec4(1.0, 1.0, 1.0, texture(ourTexture, TexCoord).r);
-        FragColor = vec4(textColor, 1.0) * sampled;
+        FragColor = vec4(textColor, 0.8) * sampled;
     }
     else
         FragColor = vec4(gridColor, alpha);

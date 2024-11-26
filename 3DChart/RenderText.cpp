@@ -2,9 +2,11 @@
 #include "RenderText.h"
 #include <iostream>
 #include <fstream>
-#include <glm/gtc/matrix_transform.hpp>
 #include "src/stb_image.h"
 #include "shader.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // 初始化TextRenderer，加载字体和初始化FreeType库
 TextRenderer::TextRenderer()
@@ -32,7 +34,8 @@ void TextRenderer::init() {
         return;
     }
 
-    FT_Set_Pixel_Sizes(face, 0, 48);  // 设置字体大小
+    FT_Set_Pixel_Sizes(face, 0, 48);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     for (unsigned char c = 0; c < 128; c++)
     {
@@ -42,6 +45,7 @@ void TextRenderer::init() {
             std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
             continue;
         }
+
         // generate texture
         unsigned int texture;
         glGenTextures(1, &texture);
