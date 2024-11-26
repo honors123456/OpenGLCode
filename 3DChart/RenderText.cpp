@@ -77,9 +77,13 @@ void TextRenderer::init() {
     glGenBuffers(1, &VBO);
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 5, NULL, GL_DYNAMIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
@@ -88,7 +92,7 @@ void TextRenderer::init() {
 void TextRenderer::renderText(Shader &shader,const std::string &text, float x, float y, float z, float scale, const glm::vec3 &color) {
     // activate corresponding render state	
     shader.use();
-    glUniform3f(glGetUniformLocation(shader.programID(), "textColor"), color.x, color.y, color.z);
+    shader.setVec3("textColor", color);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 
@@ -104,14 +108,14 @@ void TextRenderer::renderText(Shader &shader,const std::string &text, float x, f
         float w = ch.Size.x * scale;
         float h = ch.Size.y * scale;
         // update VBO for each character
-        float vertices[6][4] = {
-            { xpos,     ypos + h,   0.0f, 0.0f },            
-            { xpos,     ypos,       0.0f, 1.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
+        float vertices[6][5] = {
+            { xpos,     ypos + h,   z ,0.0f, 0.0f },            
+            { xpos,     ypos,       z ,0.0f, 1.0f },
+            { xpos + w, ypos,       z ,1.0f, 1.0f },
 
-            { xpos,     ypos + h,   0.0f, 0.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
-            { xpos + w, ypos + h,   1.0f, 0.0f }           
+            { xpos,     ypos + h,   z ,0.0f, 0.0f },
+            { xpos + w, ypos,       z ,1.0f, 1.0f },
+            { xpos + w, ypos + h,   z ,1.0f, 0.0f }           
         };
         // render glyph texture over quad
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);

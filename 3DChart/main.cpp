@@ -1,8 +1,5 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -188,15 +185,15 @@ int main(int argc,char** argv)
 
     glViewport(0,0,1000,1000);
 
-    std::vector<float> versXZ = verticesXZ(0.0f, 0.0f, 20.0f, 20.0f, 20);
-    std::vector<float> versXY = verticesXY(0.0f, 0.0f, 20.0f, 20.0f, 20);
-    std::vector<float> versYZ = verticesYZ(0.0f, 0.0f, 20.0f, 20.0f, 20);
-    std::vector<float> axisX = {0.0f, 0.0f, 0.0f, 25.0f, 0.0f,0.0f};
-    std::vector<float> axisY = {0.0f, 0.0f, 0.0f, 0.0f, 25.0f,0.0f};
-    std::vector<float> axisZ = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f,25.0f};
-    std::vector<float> coneX = createConeX(24.0f, 0.3f, 16);
-    std::vector<float> coneY = createConeY(24.0f, 0.3f, 16);
-    std::vector<float> coneZ = createConeZ(24.0f, 0.3f, 16);
+    std::vector<float> versXZ = verticesXZ(0.0f, 0.0f, 100.0f, 100.0f, 20);
+    std::vector<float> versXY = verticesXY(0.0f, 0.0f, 100.0f, 100.0f, 20);
+    std::vector<float> versYZ = verticesYZ(0.0f, 0.0f, 100.0f, 100.0f, 20);
+    std::vector<float> axisX = {0.0f, 0.0f, 0.0f, 105.0f, 0.0f,0.0f};
+    std::vector<float> axisY = {0.0f, 0.0f, 0.0f, 0.0f, 105.0f,0.0f};
+    std::vector<float> axisZ = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f,105.0f};
+    std::vector<float> coneX = createConeX(104.0f, 0.3f, 16);
+    std::vector<float> coneY = createConeY(104.0f, 0.3f, 16);
+    std::vector<float> coneZ = createConeZ(104.0f, 0.3f, 16);
 
     unsigned int VAO_XZ, VBO_XZ;
     unsigned int VAO_XY, VBO_XY;
@@ -284,6 +281,7 @@ int main(int argc,char** argv)
     //shader
     Shader shader("../../shaders/vertexShader.glsl","../../shaders/fragmentShader.glsl");
     glEnable(GL_MULTISAMPLE);
+    glEnable(GL_DEPTH_TEST);
 
     TextRenderer textRenderer;
     textRenderer.init();
@@ -295,7 +293,7 @@ int main(int argc,char** argv)
     while(!glfwWindowShouldClose(window))
     {
         glClearColor(0.2f,0.2f,0.2f,1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         glEnable(GL_BLEND); // 启用混合
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -305,8 +303,8 @@ int main(int argc,char** argv)
         glUniform1f(glGetUniformLocation(shader.programID(), "alpha"), 0.3f); // 设置透明度为 0.5
 
         glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view = glm::lookAt(glm::vec3(50.0f, 50.0f, 50.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
+        glm::mat4 view = glm::lookAt(glm::vec3(200.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 1000.0f);
 
         glUniformMatrix4fv(glGetUniformLocation(shader.programID(), "model"), 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(glGetUniformLocation(shader.programID(), "view"), 1, GL_FALSE, glm::value_ptr(view));
@@ -356,7 +354,10 @@ int main(int argc,char** argv)
         glBindVertexArray(0);
 
         shader.setBool("useTexture", true);
-        textRenderer.renderText(shader,"X", 10, 10, 10, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        shader.setInt("ourTexture", 0);
+        textRenderer.renderText(shader,"X", 107, 0, 0, 0.1f, glm::vec3(0.5, 0.8f, 0.2f));
+        textRenderer.renderText(shader,"Y", 0, 107, 0, 0.1f, glm::vec3(0.5, 0.8f, 0.2f));
+        textRenderer.renderText(shader,"Z", 0, 0, 107, 0.1f, glm::vec3(0.5, 0.8f, 0.2f));
 
         glfwSwapBuffers(window);
         glfwPollEvents();
