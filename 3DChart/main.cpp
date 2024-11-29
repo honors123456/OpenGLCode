@@ -311,15 +311,17 @@ int main(int argc,char** argv)
         glm::mat4 view          = glm::mat4(1.0f);
         glm::mat4 projection    = glm::mat4(1.0f);
         model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+        //view  = glm::translate(view, glm::vec3(0.0f, -150.0f, -500.0f));
         view  = glm::lookAt(glm::vec3(200.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         projection = glm::perspective(glm::radians(45.0f), (float)1000 / (float)1000, 0.1f, 1000.0f);
         unsigned int modelLoc = glGetUniformLocation(shader.programID(), "model");
         unsigned int viewLoc  = glGetUniformLocation(shader.programID(), "view");
+        unsigned int projectLoc=glGetUniformLocation(shader.programID(), "projection");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
-        shader.setMat4("projection", projection);
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(projectLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-        shader.setBool("useTexture", false);
+        glUniform1i(glGetUniformLocation(shader.programID(),"useTexture"),(int)false);
         // 绘制 XZ 平面
         glBindVertexArray(VAO_XZ);
         glDrawArrays(GL_LINES, 0, versXZ.size() / 3);
@@ -362,8 +364,8 @@ int main(int argc,char** argv)
         glDrawArrays(GL_TRIANGLE_FAN, 0, 16 + 2);
         glBindVertexArray(0);
 
-        shader.setBool("useTexture", true);
-        shader.setInt("ourTexture", 0);
+        glUniform1i(glGetUniformLocation(shader.programID(),"useTexture"),(int)true);
+        glUniform1i(glGetUniformLocation(shader.programID(),"ourTexture"),0);
         textRenderer.renderText(shader,"X", 115, -2.5, 0, 0.1f, glm::vec3(1.0f, 1.0f, 1.0f));
         textRenderer.renderText(shader,"Y", -2.5, 115, 0, 0.1f, glm::vec3(1.0f, 1.0f, 1.0f));
         textRenderer.renderText(shader,"Z", 0, 0, 115, 0.1f, glm::vec3(1.0f, 1.0f, 1.0f));
